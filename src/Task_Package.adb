@@ -5,33 +5,41 @@ package body Task_Package is
       PID : Integer;
       Progress : Integer := 0;
       Complexicity : Integer := 10;
+      IsInited : Boolean := False;
 
       function toString return String is
       begin
-         return "Thread " & Integer'Image(PID) & " progress is "
+         return "Thread with PID" & Integer'Image(PID) & " progress is "
            & Integer'Image(Progress) & "/" & Integer'Image(Complexicity);
       end toString;
+
    begin
       loop
          select
             accept Init(Thread_ID:Integer; Thread_Complexicity:Integer) do
-               PID:=Thread_ID;
-               Complexicity:=Thread_Complexicity;
+               if not IsInited then
+                  PID:=Thread_ID;
+                  Complexicity:=Thread_Complexicity;
+                  IsInited := True;
+                  Put_Line ("Task " & Integer'Image(PID) & " added to scheduler and initialized.");
+               else
+                  Put_Line ("Could not initializated Task with PID " & Integer'Image(Thread_ID) & ". This Task was already initialized with PID " & Integer'Image(PID));
+               end if;
             end Init;
-            Put_Line ("Task " & Integer'Image(PID) & " added to scheduler and initialized.");
          or
             accept Run do
                Progress := Progress + 1;
+               delay 1.0;
+               Put_Line (toString);
             end Run;
-            delay 1.0;
-            Put_Line (toString);
+
             if Progress >= Complexicity then
-               Put_Line("Task " & Integer'Image(PID) & " sucessfully completed. Ending thread.");
+               Put_Line("Task with PID " & Integer'Image(PID) & " sucessfully completed. Ending thread.");
                exit;
             end if;
          or
             accept Kill do
-               Put_Line ("Killing thread.");
+               Put_Line("Killing thread with PID ." & Integer'Image(PID));
             end Kill;
             exit;
          or
@@ -40,9 +48,6 @@ package body Task_Package is
             end Print;
          or
             terminate;
-            --  else
-            --  delay 1.0;
-            --  Put_Line("Blocked thread " );
          end select;
       end loop;
    end My_Task;
