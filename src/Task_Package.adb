@@ -5,7 +5,6 @@ package body Task_Package is
       PID : Integer;
       Progress : Integer := 0;
       Complexicity : Integer := 10;
-      IsInited : Boolean := False;
 
       function toString return String is
       begin
@@ -14,17 +13,15 @@ package body Task_Package is
       end toString;
 
    begin
+      accept Init(Thread_ID:Integer; Thread_Complexicity:Integer) do
+         PID:=Thread_ID;
+         Complexicity:=Thread_Complexicity;
+         Put_Line ("Task with PID" & Integer'Image(PID) & " was initialized.");
+      end Init;
       loop
          select
             accept Init(Thread_ID:Integer; Thread_Complexicity:Integer) do
-               if not IsInited then
-                  PID:=Thread_ID;
-                  Complexicity:=Thread_Complexicity;
-                  IsInited := True;
-                  Put_Line ("Task " & Integer'Image(PID) & " added to scheduler and initialized.");
-               else
-                  Put_Line ("Could not initializated Task with PID " & Integer'Image(Thread_ID) & ". This Task was already initialized with PID " & Integer'Image(PID));
-               end if;
+               Put_Line ("Could not initializated Task with PID " & Integer'Image(Thread_ID) & ". This Task was already initialized with PID " & Integer'Image(PID));
             end Init;
          or
             accept Run do
@@ -51,5 +48,4 @@ package body Task_Package is
          end select;
       end loop;
    end My_Task;
-
 end Task_Package;
