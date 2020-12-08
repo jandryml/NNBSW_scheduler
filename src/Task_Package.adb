@@ -8,7 +8,7 @@ package body Task_Package is
 
       function toString return String is
       begin
-         return "Thread with PID" & Integer'Image(PID) & " progress is "
+         return "PID " & Integer'Image(PID) & ": Task progress is "
            & Integer'Image(Progress) & "/" & Integer'Image(Complexicity);
       end toString;
 
@@ -16,12 +16,12 @@ package body Task_Package is
       accept Init(Thread_ID:Integer; Thread_Complexicity:Integer) do
          PID:=Thread_ID;
          Complexicity:=Thread_Complexicity;
-         Put_Line ("Task with PID" & Integer'Image(PID) & " was initialized.");
+         Put_Line ("PID " & Integer'Image(PID) & ": Task was initialized.");
       end Init;
       loop
          select
             accept Init(Thread_ID:Integer; Thread_Complexicity:Integer) do
-               Put_Line ("Could not initializated Task with PID " & Integer'Image(Thread_ID) & ". This Task was already initialized with PID " & Integer'Image(PID));
+               Put_Line ("PID " & Integer'Image(PID) & ": Could not initializated Task with PID " & Integer'Image(Thread_ID) & ". This Task was already initialized!");
             end Init;
          or
             accept Run do
@@ -31,12 +31,12 @@ package body Task_Package is
             end Run;
 
             if Progress >= Complexicity then
-               Put_Line("Task with PID " & Integer'Image(PID) & " sucessfully completed. Ending thread.");
+               Put_Line("PID " & Integer'Image(PID) & ": Task sucessfully completed. Ending task.");
                exit;
             end if;
          or
             accept Kill do
-               Put_Line("Killing thread with PID ." & Integer'Image(PID));
+               Put_Line("PID " & Integer'Image(PID) & ": Killing task.");
             end Kill;
             exit;
          or

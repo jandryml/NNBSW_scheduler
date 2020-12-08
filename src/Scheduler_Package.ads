@@ -1,7 +1,7 @@
 package Scheduler_Package is
    task type My_Scheduler is
       entry New_Task(PID: Integer; Complexicity: Integer);
-      entry Kill_Task;
+      entry Kill_Task(PID: Integer);
       entry Print_Scheduler_Tasks;
    end My_Scheduler;
 
